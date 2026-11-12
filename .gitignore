@@ -1,0 +1,22 @@
+# Виртуальное окружение
+.venv/
+
+# Секреты
+.env
+
+# Кэш Python
+__pycache__/
+*.pyc
+
+# Кэши инструментов
+.pytest_cache/
+.ruff_cache/
+
+# Артефакты сборки
+dist/
+build/
+*.egg-info/
+
+# Редактор и macOS
+.vscode/
+.DS_Store
