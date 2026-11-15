@@ -20,3 +20,6 @@ build/
 # Редактор и macOS
 .vscode/
 .DS_Store
+
+# Скачанные данные
+data/
