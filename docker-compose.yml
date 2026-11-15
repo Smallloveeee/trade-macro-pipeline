@@ -14,6 +14,11 @@ services:
       test: ["CMD-SHELL", "pg_isready -U trade -d trade"]
       interval: 5s
       retries: 10
+  kafka:
+    image: apache/kafka:4.0.0
+    container_name: trade-kafka
+    ports:
+      - "9092:9092"
 
 volumes:
   pgdata:
