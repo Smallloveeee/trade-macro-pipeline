@@ -29,6 +29,8 @@ packages = ["src/trade_pipeline"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+markers = ["integration: needs a running Postgres"]
+addopts = "-m 'not integration'"
 
 [tool.ruff]
 line-length = 100
