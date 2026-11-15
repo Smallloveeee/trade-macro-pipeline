@@ -74,5 +74,33 @@ services:
       producer:
         condition: service_completed_successfully
 
+  airflow:
+    build:
+      context: .
+      dockerfile: Dockerfile.airflow
+    container_name: trade-airflow
+    command: airflow standalone
+    ports:
+      - "8080:8080"
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"
+      DATABASE_URL: postgresql+psycopg://trade:trade@postgres:5432/trade
+      KAFKA_BOOTSTRAP_SERVERS: kafka:19092
+      RAW_SOURCE: s3
+      S3_BUCKET: ${S3_BUCKET}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: ${AWS_DEFAULT_REGION}
+      COMTRADE_API_KEY: ${COMTRADE_API_KEY}
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./data:/opt/airflow/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+
 volumes:
   pgdata:

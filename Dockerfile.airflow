@@ -1,0 +1,10 @@
+FROM apache/airflow:3.4.0-python3.13
+
+USER root
+COPY pyproject.toml /opt/pipeline-src/pyproject.toml
+COPY src /opt/pipeline-src/src
+COPY alembic.ini /opt/pipeline-src/alembic.ini
+COPY migrations /opt/pipeline-src/migrations
+RUN python -m venv /opt/pipeline \
+    && /opt/pipeline/bin/pip install --no-cache-dir /opt/pipeline-src
+USER airflow
