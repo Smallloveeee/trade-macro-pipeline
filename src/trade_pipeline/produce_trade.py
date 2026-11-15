@@ -1,18 +1,19 @@
-"""Публикует торговые потоки из кэша Comtrade в Kafka. Запуск: python -m trade_pipeline.produce_trade"""
+"""Публикует торговые потоки из сырых ответов Comtrade в Kafka.
+Источник: локальный диск или S3 (RAW_SOURCE=local|s3).
+Запуск: python -m trade_pipeline.produce_trade"""
 
 import json
 import logging
-from pathlib import Path
 
 from confluent_kafka import Producer
 
 from trade_pipeline.clients.comtrade import parse_trade
 from trade_pipeline.config import load_settings
 from trade_pipeline.logging_setup import setup_logging
+from trade_pipeline.raw_store import iter_local, iter_s3
 
 logger = logging.getLogger(__name__)
 
-RAW_DIR = Path("data/raw/comtrade")
 TOPIC = "trade_flows"
 
 
@@ -35,9 +36,16 @@ def main() -> None:
         {"bootstrap.servers": settings.kafka_bootstrap_servers, "enable.idempotence": True}
     )
 
+    if settings.raw_source == "s3":
+        logger.info("Reading raw data from s3://%s", settings.s3_bucket)
+        payloads = iter_s3(settings.s3_bucket)
+    else:
+        logger.info("Reading raw data from local disk")
+        payloads = iter_local()
+
     count = 0
-    for path in sorted(RAW_DIR.glob("*.json")):
-        for row in parse_trade(json.loads(path.read_text())):
+    for payload in payloads:
+        for row in parse_trade(payload):
             producer.produce(
                 TOPIC, key=message_key(row), value=json.dumps(row), on_delivery=on_delivery
             )
