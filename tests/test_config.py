@@ -15,3 +15,5 @@ def test_log_level_from_env(monkeypatch):
     settings = load_settings()
 
     assert settings.log_level == "DEBUG"
+
+    
