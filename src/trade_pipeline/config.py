@@ -23,5 +23,5 @@ def load_settings() -> Settings:
     return Settings(
         log_level=log_level,
         comtrade_api_key=comtrade_api_key,
-        database_url = database_url,
+        database_url=database_url,
     )
